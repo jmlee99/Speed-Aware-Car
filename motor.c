@@ -46,28 +46,28 @@ void PWM_init(void)
 	//OCR1B = 0;
 }
 
-void ADC_init(unsigned char channel)
+void ADC_init(void)
 {
 	ADMUX |= 0x40; // ADC 내부전압 사용 설정
-	ADMUX |= 0x41;
 	ADCSRA |= 0x07; // 분주비 설정
 	ADCSRA |= (1<<ADEN); // ADC활성화 설정
 	ADCSRA |= (1<<ADFR); // 프리러닝 모드 설정
 	
-	ADMUX = ((ADMUX&0xE0) |channel); //채널 선택 설정
-	ADCSRA |= (1<<ADSC); // 변환 시작 설정
+	//ADMUX = ((ADMUX&0xE0) |channel); //채널 선택 설정
 }
 
 int read_ADC(void)
 {
-	ADMUX |= 0x40; // ADC 내부전압 사용 설정, PF0번 핀
+	ADMUX = 0x40; // ADC 내부전압 사용 설정, PF0번 핀
+	ADCSRA |= (1<<ADSC); // 변환 시작 설정
 	while(!(ADCSRA & (1<<ADIF))); // 데이터 레지스터에 새로운 데이터가 들어올 때까지 대기
 	return ADC;
 }
 
 int read_ADC1(void)
 {
-	ADMUX |= 0x41; // ADC 내부전압 사용 설정, PF1번 핀
+	ADMUX = 0x41; // ADC 내부전압 사용 설정, PF1번 핀
+	ADCSRA |= (1<<ADSC); // 변환 시작 설정
 	while(!(ADCSRA & (1<<ADIF)));
 	return ADC;
 }
@@ -82,25 +82,27 @@ int main(void)
 {
 	int read;
 	int brk;
-    ADC_init(0);
+    ADC_init();
 	PWM_init();
 	
     while (1) 
     {
 		OCR3C = 0;
+		OCR1A = 0;
 		PORTE |= 0x00; 
 		PORTB |= 0x00;			//정지
-		read = read_ADC();
 		brk = read_ADC1();
+
 		
-		if(brk < 250)
+		if(brk <= 250)
 		{
+			read = read_ADC();
 			if(read < 100)
 			{
 				PORTE &= (1 << 4)|(1 << 0); // 정방향
 				PORTB &= (1 << 4)|(1 << 0);
-				OCR3C = 0;	  
-				OCR1A = 0;		// stop
+				OCR3C = 20;	  
+				OCR1A = 20;		// stop
 				_delay_ms(100);
 			}
 			else if((read >= 100) && (read < 200))
@@ -187,7 +189,8 @@ int main(void)
 		}
 		else
 		{
-			read = 0;
+			OCR1A = 0;	  // half speed
+			OCR3C = 0;	// full speed
 		}
     }
 }
