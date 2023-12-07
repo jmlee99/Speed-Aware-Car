@@ -10,14 +10,14 @@
 
 /*
 ###############################################################################################
-######################################## 함수 정의 ##############################################
+######################################## 함수 정의 #############################################
 ###############################################################################################
 */
 
 void PWM_init(void)
 {
 	// 핀을 출력으로 설정
-	DDRE |= (1 <<0)|(1 <<2)|(1 <<5);	// 0b00100101;
+	DDRE |= (1 <<0)|(1 <<2)|(1 <<5);// 0b00100101;
 	DDRB |= (1 <<0)|(1 <<2)|(1 <<5);	// 0b00100101;
 	PORTE |= 0x00;
 	PORTB |= 0x00;
@@ -84,113 +84,281 @@ int main(void)
 	int brk;
     ADC_init();
 	PWM_init();
+	DDRA= 0x00;
 	
     while (1) 
     {
 		OCR3C = 0;
 		OCR1A = 0;
-		PORTE |= 0x00; 
+		PORTE |= 0x00;
 		PORTB |= 0x00;			//정지
-		brk = read_ADC1();
 
-		
-		if(brk <= 250)
+
+		if(!(PINA & (1<<PA0)) == 1)
 		{
-			read = read_ADC();
-			if(read < 100)
+			while(!(PINA & (1<<PA1)) != 1 | !(PINA & (1<<PA2)) != 1 | !(PINA & (1<<PA3)) != 1)
 			{
-				PORTE &= (1 << 4)|(1 << 0); // 정방향
-				PORTB &= (1 << 4)|(1 << 0);
-				OCR3C = 20;	  
-				OCR1A = 20;		// stop
-				_delay_ms(100);
-			}
-			else if((read >= 100) && (read < 200))
-			{
-				PORTE |= (1 << 4)|(1 << 0); // 정방향
-				PORTB |= (1 << 4)|(1 << 0); // 정방향
-				OCR1A =25;	  // half speed
-				OCR3C =25;	  // half speed
-				_delay_ms(100);
+				brk = read_ADC1();
+				read = read_ADC();
+				if(brk <= 250)
+				{
+					if(read < 100)
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0);
+						OCR3C = 20;	  
+						OCR1A = 20;		// stop
+						_delay_ms(100);
+					}
+					else if((read >= 100) && (read < 200))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =25;	  // half speed
+						OCR3C =25;	  // half speed
+						_delay_ms(100);
 			
+					}
+					else if((read >= 200) && (read < 300))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR3C =50;	// full speed
+						OCR1A =50;	  // half speed
+						_delay_ms(100);
+					}
+					else if((read >= 300) && (read < 400))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =75;	  // half speed
+						OCR3C =75;	// full speed
+						_delay_ms(100);
+					}
+					else if((read >= 400) && (read < 500))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =100;	  // half speed
+						OCR3C = 100;	// full speed
+						_delay_ms(100);
+					}
+					else if((read >= 500) && (read < 600))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A = 125;	  // half speed
+						OCR3C = 125;	// full speed
+						_delay_ms(100);
+					}
+					else if((read >= 600) && (read < 700))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =150;	  // half speed
+						OCR3C =150;	// full speed
+						_delay_ms(100);
+					}
+					else if((read >= 700) && (read < 800))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =175;	  // half speed
+						OCR3C =175;	// full speed
+						_delay_ms(100);
+					}
+					else if((read >= 800) && (read < 900))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =200;	  // half speed
+						OCR3C =200;	// full speed
+						_delay_ms(100);
+					}
+					else if((read >= 900) && (read < 1000))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =225;	  // half speed
+						OCR3C =225;	// full speed
+						_delay_ms(100);
+					}
+					else
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =255;	  // half speed
+						OCR3C =255;	// full speed
+						_delay_ms(100);
+					}
+				}
+				else
+				{
+					OCR1A = 0;	  // half speed
+					OCR3C = 0;  // full speed
+				}
+				if(!(PINA & (1<<PA3)) == 1)
+				{
+					break;
+				}
 			}
-			else if((read >= 200) && (read < 300))
-			{
-				PORTE |= (1 << 4)|(1 << 0); // 정방향
-				PORTB |= (1 << 4)|(1 << 0); // 정방향
-				OCR3C =50;	// full speed
-				OCR1A =50;	  // half speed
-				_delay_ms(100);
-			}
-			else if((read >= 300) && (read < 400))
-			{
-				PORTE |= (1 << 4)|(1 << 0); // 정방향
-				PORTB |= (1 << 4)|(1 << 0); // 정방향
-				OCR1A =75;	  // half speed
-				OCR3C =75;	// full speed
-				_delay_ms(100);
-			}
-			else if((read >= 400) && (read < 500))
-			{
-				PORTE |= (1 << 4)|(1 << 0); // 정방향
-				PORTB |= (1 << 4)|(1 << 0); // 정방향
-				OCR1A =100;	  // half speed
-				OCR3C = 100;	// full speed
-				_delay_ms(100);
-			}
-			else if((read >= 500) && (read < 600))
-			{
-				PORTE |= (1 << 4)|(1 << 0); // 정방향
-				PORTB |= (1 << 4)|(1 << 0); // 정방향
-				OCR1A = 125;	  // half speed
-				OCR3C = 125;	// full speed
-				_delay_ms(100);
-			}
-			else if((read >= 600) && (read < 700))
-			{
-				PORTE |= (1 << 4)|(1 << 0); // 정방향
-				PORTB |= (1 << 4)|(1 << 0); // 정방향
-				OCR1A =150;	  // half speed
-				OCR3C =150;	// full speed
-				_delay_ms(100);
-			}
-			else if((read >= 700) && (read < 800))
-			{
-				PORTE |= (1 << 4)|(1 << 0); // 정방향
-				PORTB |= (1 << 4)|(1 << 0); // 정방향
-				OCR1A =175;	  // half speed
-				OCR3C =175;	// full speed
-				_delay_ms(100);
-			}
-			else if((read >= 800) && (read < 900))
-			{
-				PORTE |= (1 << 4)|(1 << 0); // 정방향
-				PORTB |= (1 << 4)|(1 << 0); // 정방향
-				OCR1A =200;	  // half speed
-				OCR3C =200;	// full speed
-				_delay_ms(100);
-			}
-			else if((read >= 900) && (read < 1000))
-			{
-				PORTE |= (1 << 4)|(1 << 0); // 정방향
-				PORTB |= (1 << 4)|(1 << 0); // 정방향
-				OCR1A =225;	  // half speed
-				OCR3C =225;	// full speed
-				_delay_ms(100);
-			}
-			else
-			{
-				PORTE |= (1 << 4)|(1 << 0); // 정방향
-				PORTB |= (1 << 4)|(1 << 0); // 정방향
-				OCR1A =255;	  // half speed
-				OCR3C =255;	// full speed
-				_delay_ms(100);
-			}
-		}
-		else
+		} // 일반 모드
+		
+		/*############################################
+		##################30km구역####################
+		*/
+		if(!(PINA & (1<<PA1)) == 1)
 		{
-			OCR1A = 0;	  // half speed
-			OCR3C = 0;	// full speed
-		}
-    }
+			while((!(PINA & (1<<PA0)) != 1) | (!(PINA & (1<<PA2)) != 1) | (!(PINA & (1<<PA3)) != 1))
+			{
+				brk = read_ADC1();
+				read = read_ADC();
+				if(brk <= 250)
+				{
+					if(read < 100)
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0);
+						OCR3C = 20;
+						OCR1A = 20;		// stop
+						_delay_ms(100);
+					}
+					else if((read >= 100) && (read < 300))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =25;	  // half speed
+						OCR3C =25;	  // half speed
+						_delay_ms(100);
+						
+					}
+					else if((read >= 300) && (read < 600))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR3C =50;	// full speed
+						OCR1A =50;	  // half speed
+						_delay_ms(100);
+					}
+					else if((read >= 600) && (read < 900))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =75;	  // half speed
+						OCR3C =75;	// full speed
+						_delay_ms(100);
+					}
+					else
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =100;	  // half speed
+						OCR3C = 100;	// full speed
+						_delay_ms(100);
+					}
+					
+				}
+				else
+				{
+					OCR1A = 0;	  // half speed
+					OCR3C = 0;  // full speed
+				}
+				if(!(PINA & (1<<PA3)) == 1)
+				{
+					break;
+				}
+			}
+		} // 30km 구역
+		
+		
+		/*############################################
+		##################50km구역####################
+		*/
+		
+		if(!(PINA & (1<<PA2)) == 1)
+		{
+			while(!(PINA & (1<<PA0)) != 1 | !(PINA & (1<<PA1)) != 1 | !(PINA & (1<<PA3)) != 1)
+			{
+				brk = read_ADC1();
+				read = read_ADC();
+				if(brk <= 250)
+				{
+					if(read < 100)
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0);
+						OCR3C = 20;
+						OCR1A = 20;		// stop
+						_delay_ms(100);
+					}
+					else if((read >= 100) && (read < 250))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =25;	  // half speed
+						OCR3C =25;	  // half speed
+						_delay_ms(100);
+						
+					}
+					else if((read >= 250) && (read < 400))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR3C =50;	// full speed
+						OCR1A =50;	  // half speed
+						_delay_ms(100);
+					}
+					else if((read >= 400) && (read < 550))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =75;	  // half speed
+						OCR3C =75;	// full speed
+						_delay_ms(100);
+					}
+					else if((read >= 550) && (read < 700))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =100;	  // half speed
+						OCR3C = 100;	// full speed
+						_delay_ms(100);
+					}
+					else if((read >= 700) && (read < 850))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A = 125;	  // half speed
+						OCR3C = 125;	// full speed
+						_delay_ms(100);
+					}
+					else if((read >= 850) && (read < 1000))
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =150;	  // half speed
+						OCR3C =150;	// full speed
+						_delay_ms(100);
+					}
+					else
+					{
+						PORTE |= (1 << 4)|(1 << 0); // 정방향
+						PORTB |= (1 << 4)|(1 << 0); // 정방향
+						OCR1A =175;	  // half speed
+						OCR3C =175;	// full speed
+						_delay_ms(100);
+					}
+				}
+				else
+				{
+					OCR1A = 0;	  // half speed
+					OCR3C = 0;  // full speed
+				} 
+				if(!(PINA & (1<<PA3)) == 1)
+				{
+					break;
+				}
+			}
+		} // 50km 구역
+	}
 }
