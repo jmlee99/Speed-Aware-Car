@@ -1,2 +1,3 @@
 # Speed-Aware-Car
-Controls the speed of car wheels (motor) on ATmega128 with numeric recognition based on MNIST and CNN.
+
+ATmega128 based on automatic reset button recognition controls the speed of the car wheels (motor) using PWM.
